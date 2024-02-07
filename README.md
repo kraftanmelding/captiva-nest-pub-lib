@@ -28,6 +28,8 @@ example of usage is like this:
     my_sensors= tydeclient.get_sensor_for_powerplants() # if we pass a hppid we get the sensor associated with a specific hppid
     sensor_info = tydeclient.get_sensor_info(sensorids)  # get the info for a specific sensorid
     sensor_data = tydeclient.read_data(["sensorId_1", "sensorId_2"], timefrom=1704107311, timeto=1705316911, granularity="HOURLY", aligned= False) 
+    # DELETE Sensors. if you set timefrom=0 and timeto=0 it will completely delete the sensor including sensor metadata. 
+    delete = tydeclient.delete_sensor_data(sensorids= ["sensorId_1", "sensorId_2"], timefrom=1704107311, timeto=1705316911)
 
 
 TydeClient also accept more advanced parameters, such as audience, authorization endpoints etc. The default one should just work fine!

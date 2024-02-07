@@ -184,6 +184,19 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
             return {}
 
+    def delete_sensor_data(self, sensor_ids, timefrom, timeto):
+        request_url = config.TYDE_BASE_URL + "/api/v1/data/deletedata"
+        try:
+            data = {'sensorids': sensor_ids, "timefrom": timefrom, "timeto": timeto}
+            config.LOGGER.warning(f"Deleting Sensor data {data}")
+            head = {"Authorization": self.get_access_token()}
+            my_res = requests.delete(request_url, params=data, headers=head)
+            my_res.raise_for_status()
+            return my_res.json()
+        except Exception as e:
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            return {}
+
     def read_data(self, sensor_ids, timefrom=0, timeto=0, granularity="HOURLY", aligned=False):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/readdata"
         try:
