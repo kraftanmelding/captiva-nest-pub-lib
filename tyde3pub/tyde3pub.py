@@ -169,7 +169,7 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
     def get_sensor_info(self, sensorids):
@@ -181,7 +181,7 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
     def delete_sensor_data(self, sensor_ids, timefrom, timeto):
@@ -194,7 +194,7 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
     def read_data(self, sensor_ids, timefrom=0, timeto=0, granularity="HOURLY", aligned=False):
@@ -206,7 +206,7 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
 
@@ -219,7 +219,7 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
     def get_portfolio_info(self, ppid):
@@ -230,5 +230,5 @@ class TydeClient:
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
