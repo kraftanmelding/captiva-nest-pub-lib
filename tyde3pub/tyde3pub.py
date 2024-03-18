@@ -209,6 +209,31 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
+    def read_alarms(self, sensor_ids, timefrom=0, timeto=0):
+        request_url = config.TYDE_BASE_URL + "/api/v1/data/readalarms"
+        try:
+            data = {'sensorids': sensor_ids, 'aggtype': "RAS", "timefrom":timefrom, "timeto":timeto}
+            head= {"Authorization": self.get_access_token()}
+            my_res = requests.get(request_url, params=data, headers=head)
+            my_res.raise_for_status()
+            return my_res.json()
+        except Exception as e:
+            config.LOGGER.warning(f"Something went wrong with the alarm request! Code{my_res.status_code} {my_res.text} Error is:{e}")
+            return {}
+
+
+    def get_latest_datapoint(self, sensor_ids):
+        request_url = config.TYDE_BASE_URL + "/api/v1/data/getlatest"
+        try:
+            data = {'sensorids': sensor_ids}
+            head= {"Authorization": self.get_access_token()}
+            my_res = requests.get(request_url, params=data, headers=head)
+            my_res.raise_for_status()
+            return my_res.json()
+        except Exception as e:
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
+            return {}
+
 
     # ######################  PORTFOLIO RELATED FUNCTIONS #############################################
     def list_portfolios(self):
