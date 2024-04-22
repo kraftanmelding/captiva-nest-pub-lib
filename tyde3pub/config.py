@@ -13,6 +13,3 @@ formatter = logging.Formatter('%(asctime)s~%(levelname)s~mod:%(module)s---> %(me
 ch = logging.StreamHandler(sys.stdout)
 ch.setFormatter(formatter)
 LOGGER.addHandler(ch)
-
-
-
