@@ -44,29 +44,35 @@ class TydeClient:
                                                             }
         """
         self.access_token = None
-        self.keycloak_url = f"{configuration.get('base_url',config.DEFAULT_KEYCLOAK_URL)}/realms/{configuration.get('realm',config.DEFAULT_REALM)}"
+        self.keycloak_url = f"{configuration.get('base_url', config.DEFAULT_KEYCLOAK_URL)}/realms/{configuration.get('realm', config.DEFAULT_REALM)}"
         self.client_id = configuration.get("client_id", config.CLIENT_ID)
         self.access_token_url = f"{self.keycloak_url}/protocol/openid-connect/token"
         self.username = configuration["username"]
         self.password = configuration["password"]
         self.target_audience = configuration.get("audience", config.VERIFIER_AUDIENCE)
         self.jwks_client = PyJWKClient(f"{self.keycloak_url}/protocol/openid-connect/certs")
-        self.tyde_base_url= configuration.get('tyde_base_url', config.TYDE_BASE_URL)
+        self.tyde_base_url = configuration.get('tyde_base_url', config.TYDE_BASE_URL)
         self.__fetch_access_token()
 
     # ######################  TOKEN/ AUTH RELATED FUNCTIONS #############################################
     def __fetch_access_token(self):
-        data = {'username': self.username, 'password': self.password, 'client_id': self.client_id,'grant_type': 'password'}   # post body
-        self.access_token=None
+        data = {
+            'username': self.username,
+            'password': self.password,
+            'client_id': self.client_id,
+            'grant_type': 'password'
+        }  # post body
+
+        self.access_token = None
         while not self.access_token:
             try:
                 response = requests.post(self.access_token_url, data=data)
                 response.raise_for_status()
-                # access JSOn content
-                jsonResponse = response.json()
-                self.access_token = jsonResponse["access_token"]
+                # access json content
+                json_response = response.json()
+                self.access_token = json_response["access_token"]
             except Exception as e:
-                config.LOGGER.warning(f"Failed to fetch online token! Rrying again in 10 seconds {e}")
+                config.LOGGER.warning(f"Failed to fetch online token! Trying again in 10 seconds {e}")
                 time.sleep(10)
 
     def is_token_valid(self):
@@ -87,7 +93,7 @@ class TydeClient:
         Returns:
             string (string): A valid access token.
         """
-        # if token is not valid we need to fetch a new one..
+        # if token is not valid we need to fetch a new one.
         if not self.is_token_valid():
             config.LOGGER.debug("fetching token online")
             self.__fetch_access_token()
@@ -97,7 +103,14 @@ class TydeClient:
     def print_role_info(self):
         access_token = self.get_access_token(False)
         signing_key = self.jwks_client.get_signing_key_from_jwt(access_token)
-        userinfo = jwt.decode(access_token, signing_key.key, "RS256", audience=config.CLIENT_ID, options={"verify_signature": True})
+        userinfo = jwt.decode(
+            access_token,
+            signing_key.key,
+            "RS256",
+            audience=config.CLIENT_ID,
+            options={"verify_signature": True}
+        )
+
         roles = userinfo["realm_access"]["roles"]
         print(f"Your Email: {userinfo['email']} , Your Roles are: {list(set(roles) & set(config.ALL_ROLES))}")
 
@@ -105,19 +118,19 @@ class TydeClient:
         print("checking Upstream ")
         head = {"Authorization": self.get_access_token()}
         try:
-            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/healthz" , headers=head)
+            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/healthz", headers=head)
             my_res.raise_for_status()
             print("Proxy Is online!")
         except Exception as e:
             config.LOGGER.warning(f"Something wrong with the proxy. Error is: {e}")
         try:
-            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/context/healthz" , headers=head)
+            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/context/healthz", headers=head)
             my_res.raise_for_status()
             print("Context manager Is online!")
         except Exception as e:
             config.LOGGER.warning(f"Something wrong with the Context manager. Error is: {e}")
         try:
-            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/access/healthz" , headers=head)
+            my_res = requests.get(config.TYDE_BASE_URL + "/api/v1/access/healthz", headers=head)
             my_res.raise_for_status()
             print("Access manager Is online!")
         except Exception as e:
@@ -126,7 +139,7 @@ class TydeClient:
     def has_access_to_hpp(self, hppid):
         request_url = config.TYDE_BASE_URL + f"/api/v1/access/users/hasaccess?email={self.username}&powerplant_id={hppid}"
         try:
-            head= {"Authorization": self.get_access_token()}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
             my_res.raise_for_status()
             return my_res.json()
@@ -138,7 +151,7 @@ class TydeClient:
     def list_powerplants(self):
         request_url = config.TYDE_BASE_URL + f"/api/v1/context/context/plants"
         try:
-            head= {"Authorization": self.get_access_token()}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
             my_res.raise_for_status()
             return my_res.json()
@@ -149,7 +162,7 @@ class TydeClient:
     def get_powerplant_info(self, hppid):
         request_url = config.TYDE_BASE_URL + f"/api/v1/access/powerplants/{hppid}/info"
         try:
-            head= {"Authorization": self.get_access_token()}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
             my_res.raise_for_status()
             return my_res.json()
@@ -200,9 +213,17 @@ class TydeClient:
     def read_data(self, sensor_ids, timefrom=0, timeto=0, granularity="HOURLY", aligned=False):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/readdata"
         try:
-            data = {'sensorids': sensor_ids, 'aggtype': granularity, "timefrom":timefrom, "timeto":timeto, "aligned":aligned }
-            head= {"Authorization": self.get_access_token()}
+            data = {
+                'sensorids': sensor_ids,
+                'aggtype': granularity,
+                "timefrom": timefrom,
+                "timeto": timeto,
+                "aligned": aligned
+            }
+
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
+            print(my_res.status_code)
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
@@ -212,15 +233,14 @@ class TydeClient:
     def read_alarms(self, sensor_ids, timefrom=0, timeto=0):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/readalarms"
         try:
-            data = {'sensorids': sensor_ids, 'aggtype': "RAS", "timefrom":timefrom, "timeto":timeto}
-            head= {"Authorization": self.get_access_token()}
+            data = {'sensorids': sensor_ids, 'aggtype': "RAS", "timefrom": timefrom, "timeto": timeto}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
             my_res.raise_for_status()
             return my_res.json()
         except Exception as e:
             config.LOGGER.warning(f"Something went wrong with the alarm request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
-
 
     def get_latest_datapoint(self, sensor_ids):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/getlatest"
@@ -234,12 +254,11 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
-
     # ######################  PORTFOLIO RELATED FUNCTIONS #############################################
     def list_portfolios(self):
         request_url = config.TYDE_BASE_URL + f"/api/v1/access/portfolios/list"
         try:
-            head= {"Authorization": self.get_access_token()}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
             my_res.raise_for_status()
             return my_res.json()
