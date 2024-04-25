@@ -35,16 +35,16 @@ print("My sensors:", my_sensor_info)
 
 sensorids = ["stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"]
 
-# Get data between timestamps. Timestamps are in Epoch time format (https://www.epochconverter.com/)
-timefrom = 1711929600  # 1st. of April 2024
-timeto = 1712016000  # 2nd. of April 2024
+# Get data between timestamps. Timestamps are in ISO 8601 format
+from_time = "2021-04-01T00:00:00Z"
+to_time = "2021-04-02T00:00:00Z"
 
 # Alarms is disabled for now
-# alarms_data = tydeclient.read_alarms(alarm_id, timefrom=1709288763, timeto=1710757565)
+# alarms_data = tydeclient.read_alarms(alarm_id, from_time=1709288763, to_time=1710757565)
 
 
-# sensor_data = tydeclient.read_data(sensorids, timefrom=timefrom, timeto=timeto, granularity="RAW")
-sensor_data = tydeclient.read_data(sensorids, timefrom=timefrom, timeto=timeto)
+# sensor_data = tydeclient.get_aggregated_data(sensorids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
+sensor_data = tydeclient.get_aggregated_data(sensorids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
 print(sensor_data)
 
 # Disabled converter as of now
