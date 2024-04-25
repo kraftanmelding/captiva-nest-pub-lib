@@ -31,7 +31,7 @@ my_sensors = tydeclient.get_sensor_for_powerplants()
 my_sensor_info = tydeclient.get_sensor_info("stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg")
 print("My sensors:", my_sensor_info)
 
-# port_list = tydeclient.list_portfolios()
+# portfolio_list = tydeclient.list_portfolios()
 
 sensor_ids = ["stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"]
 
@@ -43,9 +43,11 @@ to_time = "2024-04-02T00:00:00Z"
 # alarms_data = tydeclient.read_alarms(alarm_id, from_time=1709288763, to_time=1710757565)
 
 
-# sensor_data = tydeclient.get_aggregated_data(sensor_ids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
+raw_sensor_data = tydeclient.get_raw_data(sensor_ids, from_time=from_time, to_time=to_time)
+print("Raw sensor data:", raw_sensor_data)
+
 sensor_data = tydeclient.get_aggregated_data(sensor_ids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
-print(sensor_data)
+print("Aggregated sensor data", sensor_data)
 
 # Disabled converter as of now
 # result= converter.convert("km", "m", 5)  # result is 5000
