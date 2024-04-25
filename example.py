@@ -22,11 +22,13 @@ my = tydeclient.list_powerplants()
 print("My plants:", my)
 
 # Test for Hån power plant
-hppinfo = tydeclient.get_powerplant_info("65c21104a7f6f91143d1055b")
+pp_id = "660e967dbfe96ecfe47033f6"
 
-haveiaccess = tydeclient.has_access_to_hpp("65c21104a7f6f91143d1055b")
+hppinfo = tydeclient.get_powerplant_info(pp_id)
 
-my_sensors = tydeclient.get_sensor_for_powerplants()
+haveiaccess = tydeclient.has_access_to_hpp(pp_id)
+
+my_sensors = tydeclient.get_sensor_for_powerplants(pp_id)
 
 my_sensor_info = tydeclient.get_sensor_info("stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg")
 print("My sensors:", my_sensor_info)
@@ -39,9 +41,11 @@ sensor_ids = ["stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"]
 from_time = "2024-04-01T00:00:00Z"
 to_time = "2024-04-02T00:00:00Z"
 
-# Alarms is disabled for now
-# alarms_data = tydeclient.read_alarms(alarm_id, from_time=1709288763, to_time=1710757565)
+# Get alarm
 
+alarm_id = "proxima.Omron-Fins-Ethernet.Madland.SCADA_Omron.Madland.MASKIN-G1.VV.HOVEDVENTIL.AAPEN_STS"
+alarms_data = tydeclient.get_alarms(alarm_id, from_time=from_time, to_time=to_time)
+print("Alarms data:", alarms_data)
 
 raw_sensor_data = tydeclient.get_raw_data(sensor_ids, from_time=from_time, to_time=to_time)
 print("Raw sensor data:", raw_sensor_data)
@@ -52,4 +56,4 @@ print("Aggregated sensor data", sensor_data)
 # Disabled converter as of now
 # result= converter.convert("km", "m", 5)  # result is 5000
 # results2 = converter.convert("m^3", "l", 10) # result is 9999.999
-print("done")
+print("Done")
