@@ -16,9 +16,9 @@ setup(
   description="library implementing tyde3 functionalities, authentication, timeseries etc",
   long_description=long_description,
   long_description_content_type="text/markdown",
-  url='https://github.com/enestor-as/tyde3-pub-lib',
-  download_url = 'https://github.com/enestor-as/tyde3-pub-lib/dist/tyde3pub-_%s.tar.gz' % VERSION,
-  keywords = ['tyde', 'timeseries', 'auth', "tyde3"],
+  url='https://github.com/CaptivaDigitalSolutions/captiva-nest-pub-lib',
+  download_url='https://github.com/CaptivaDigitalSolutions/captiva-nest-pub-lib/dist/tyde3pub-_%s.tar.gz' % VERSION,
+  keywords=['tyde', 'timeseries', 'auth', "tyde3"],
   install_requires=[
     'PyJWT',
     'cryptography',
@@ -27,8 +27,9 @@ setup(
     'numpy',
     'pint'
   ],
+  # Dev. Status -> Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
   classifiers=[
-    'Development Status :: 3 - Alpha',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Build Tools',
     'License :: Broentech Proprietary',
@@ -41,4 +42,3 @@ setup(
   ],
   python_requires='>=3.8',
 )
-
