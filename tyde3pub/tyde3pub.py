@@ -18,7 +18,6 @@ __author__ = 'Luca'
 
 from jwt import PyJWKClient
 import jwt
-import json
 import requests
 import time
 from . import config
