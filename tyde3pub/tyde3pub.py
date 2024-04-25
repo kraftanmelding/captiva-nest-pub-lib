@@ -214,15 +214,14 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
-    def read_data(self, sensor_ids, from_time=0, to_time=0, granularity="HOURLY", aligned=False):
-        request_url = config.TYDE_BASE_URL + "/api/v1/data/readdata"
+    def get_aggregated_data(self, sensor_ids, from_time=None, to_time=None, aggregation="HOURLY"):
+        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/aggregated"
         try:
             data = {
                 'sensor_ids': sensor_ids,
-                'aggtype': granularity,
                 "from_time": from_time,
                 "to_time": to_time,
-                "aligned": aligned
+                'aggregation': aggregation
             }
 
             head = {"Authorization": self.get_access_token()}
@@ -234,10 +233,34 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
-    def read_alarms(self, sensor_ids, from_time=0, to_time=0):
-        request_url = config.TYDE_BASE_URL + "/api/v1/data/readalarms"
+    def get_raw_data(self, sensor_ids, from_time=None, to_time=None):
+        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/raw"
         try:
-            data = {'sensor_ids': sensor_ids, 'aggtype': "RAS", "from_time": from_time, "to_time": to_time}
+            data = {
+                'sensor_ids': sensor_ids,
+                "from_time": from_time,
+                "to_time": to_time
+            }
+
+            head = {"Authorization": self.get_access_token()}
+            my_res = requests.get(request_url, params=data, headers=head)
+            print(my_res.status_code)
+            my_res.raise_for_status()
+            return my_res.json()
+        except Exception as e:
+            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
+            return {}
+
+    def read_alarms(self, sensor_ids, from_time=None, to_time=None):
+        request_url = config.TYDE_BASE_URL + "/api/v1/alarms"
+        try:
+            data = {
+                'sensor_ids': sensor_ids,
+                'aggtype': "RAS",
+                "from_time": from_time,
+                "to_time": to_time
+            }
+
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
             my_res.raise_for_status()
@@ -247,7 +270,7 @@ class TydeClient:
             return {}
 
     def get_latest_datapoint(self, sensor_ids):
-        request_url = config.TYDE_BASE_URL + "/api/v1/data/getlatest"
+        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/latest"
         try:
             data = {'sensor_ids': sensor_ids}
             head = {"Authorization": self.get_access_token()}
