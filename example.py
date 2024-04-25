@@ -1,7 +1,7 @@
 from tyde3pub import tyde3pub
 # from tyde3pub import converter
 
-# sensorids = [
+# sensor_ids = [
 #     "stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg",
 #     "stepsolutions.Haan.t_h02_10mindata_Grd_Prod_Pwr_Avg",
 #     "stepsolutions.Haan.t_h03_10mindata_Grd_Prod_Pwr_Avg"
@@ -33,18 +33,18 @@ print("My sensors:", my_sensor_info)
 
 # port_list = tydeclient.list_portfolios()
 
-sensorids = ["stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"]
+sensor_ids = ["stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"]
 
 # Get data between timestamps. Timestamps are in ISO 8601 format
-from_time = "2021-04-01T00:00:00Z"
-to_time = "2021-04-02T00:00:00Z"
+from_time = "2024-04-01T00:00:00Z"
+to_time = "2024-04-02T00:00:00Z"
 
 # Alarms is disabled for now
 # alarms_data = tydeclient.read_alarms(alarm_id, from_time=1709288763, to_time=1710757565)
 
 
-# sensor_data = tydeclient.get_aggregated_data(sensorids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
-sensor_data = tydeclient.get_aggregated_data(sensorids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
+# sensor_data = tydeclient.get_aggregated_data(sensor_ids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
+sensor_data = tydeclient.get_aggregated_data(sensor_ids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
 print(sensor_data)
 
 # Disabled converter as of now
