@@ -32,7 +32,7 @@ class TydeClient:
             * get_access_token : return a valid access token.
             * Verifier: all the verifier methods are also accessible here.
         Args:
-            config (dict): Configuration dictionary. Example: {
+            configuration (dict): Configuration dictionary. Example: {
                                                                 "username" : "pablo@broentech.no", <-- Required
                                                                 "password" : "adsadad343143da",    <-- Required
                                                                 "client_id" : "client_id",
@@ -93,7 +93,7 @@ class TydeClient:
     def get_access_token(self, bearer=True):
         """ Return a valid access token. If the current access token is expired, it will automatically fetch a new one.
         Args:
-            bearer (bool Optional def=False): Prepend the world 'Bearer' in front of the access token)
+            bearer (bool Optional def=False): Prepend the world 'Bearer' in front of the access token
         Returns:
             string (string): A valid access token.
         """
@@ -250,7 +250,7 @@ class TydeClient:
         request_url = config.TYDE_BASE_URL + "/api/v1/data/getlatest"
         try:
             data = {'sensor_ids': sensor_ids}
-            head= {"Authorization": self.get_access_token()}
+            head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
             my_res.raise_for_status()
             return my_res.json()
