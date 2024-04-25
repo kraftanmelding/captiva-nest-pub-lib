@@ -1,18 +1,18 @@
-__author__ = 'Luca'
+__author__ = 'Marius'
 """
     >File : tyde3pub.py
 
     >Date of creation : 15.01.2024
 
-    >Copyrights : Broentech Solutions AS
+    >Copyrights : Captiva Digital Solutions AS
 
-    >Project : Next-Gen Tyde
+    >Project : Captiva Nest
 
-    >Author : Luca Petricca (lucap@broentech.no)
+    >Author : Marius Øgård (mo@captiva.no)
 
     Description :
 
-        This is a public library that encapsule useful tyde3 api.
+        This is a public library that encapsule useful Captiva Nest API endpoints.
 
 """
 
@@ -54,6 +54,7 @@ class TydeClient:
         self.__fetch_access_token()
 
     # ######################  TOKEN/ AUTH RELATED FUNCTIONS #############################################
+
     def __fetch_access_token(self):
         data = {
             'username': self.username,
@@ -141,165 +142,110 @@ class TydeClient:
             config.LOGGER.warning(f"Something wrong with the Access manager. Error is: {e}")
 
     def has_access_to_hpp(self, hppid):
-        request_url = config.TYDE_BASE_URL + f"/api/v1/access/users/hasaccess?email={self.username}&powerplant_id={hppid}"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
-            return {}
+        return self.make_request(f"/api/v1/access/users/hasaccess?email={self.username}&powerplant_id={hppid}",
+                                 "Something went wrong with the access request!")
 
     # ######################  POWERPLANTS RELATED FUNCTIONS #############################################
-    def list_powerplants(self):
-        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/plants"
+
+    def make_request(self, url_suffix, log_message, method='get', data=None):
+        request_url = config.TYDE_BASE_URL + url_suffix
+        headers = {"Authorization": self.get_access_token()}
+        response = None
+
         try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
+            if method == 'get':
+                response = requests.get(request_url, headers=headers, params=data)
+            elif method == 'post':
+                response = requests.post(request_url, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
         except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
+            error_details = f" Code {response.status_code} {response.text}" if response else ""
+            config.LOGGER.warning(f"{log_message}{error_details} Error: {e}")
             return {}
+
+    def list_powerplants(self):
+        return self.make_request("/api/v1/context/context/plants",
+                                 "Something went wrong with the powerplant list request!")
 
     def get_powerplant_info(self, hppid):
-        request_url = config.TYDE_BASE_URL + f"/api/v1/access/powerplants/{hppid}/info"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
-            return {}
+        return self.make_request(f"/api/v1/access/powerplants/{hppid}/info",
+                                 "Something went wrong with getting powerplant info!")
 
-    ######################## SENSORS RELATED FUNCTIONS #############################################
+    # ########################## SENSORS RELATED FUNCTIONS ##############################################
+
     def get_sensor_for_powerplants(self, hpp_id=None):
         data = {}
         if hpp_id:
             data["associations"] = hpp_id
-        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/sensors"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
-            return {}
+
+        return self.make_request("/api/v1/context/context/sensors",
+                                 "Something went wrong with the sensor request!",
+                                 data=data)
 
     def get_sensor_info(self, sensor_ids):
         data = {"sensor_ids": sensor_ids}
-        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/sensors"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
-            return {}
+
+        return self.make_request("/api/v1/context/context/sensors",
+                                 "Something went wrong with the sensor info request!",
+                                 data=data)
 
     def delete_sensor_data(self, sensor_ids, from_time, to_time):
-        request_url = config.TYDE_BASE_URL + "/api/v1/data/deletedata"
-        try:
-            data = {'sensor_ids': sensor_ids, "from_time": from_time, "to_time": to_time}
-            config.LOGGER.warning(f"Deleting Sensor data {data}")
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.delete(request_url, params=data, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
-            return {}
+        data = {'sensor_ids': sensor_ids, "from_time": from_time, "to_time": to_time}
+        config.LOGGER.warning(f"Deleting Sensor data {data}")
+
+        return self.make_request("/api/v1/data/deletedata",
+                                 "Something went wrong with the delete sensor data request!",
+                                 method='post',
+                                 data=data)
 
     def get_aggregated_data(self, sensor_ids, from_time=None, to_time=None, aggregation="HOURLY"):
-        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/aggregated"
-        try:
-            data = {
-                'sensor_ids': sensor_ids,
-                "from_time": from_time,
-                "to_time": to_time,
-                'aggregation': aggregation
-            }
+        data = {
+            'sensor_ids': sensor_ids,
+            "from_time": from_time,
+            "to_time": to_time,
+            'aggregation': aggregation
+        }
 
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            print(my_res.status_code)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
-            return {}
+        return self.make_request("/api/v1/sensors/aggregated",
+                                 "Something went wrong with the aggregated data request!",
+                                 data=data)
 
     def get_raw_data(self, sensor_ids, from_time=None, to_time=None):
-        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/raw"
-        try:
-            data = {
-                'sensor_ids': sensor_ids,
-                "from_time": from_time,
-                "to_time": to_time
-            }
+        data = {
+            'sensor_ids': sensor_ids,
+            "from_time": from_time,
+            "to_time": to_time
+        }
 
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            print(my_res.status_code)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
-            return {}
+        return self.make_request("/api/v1/sensors/raw",
+                                 "Something went wrong with the raw data request!",
+                                 data=data)
 
     def read_alarms(self, sensor_ids, from_time=None, to_time=None):
-        request_url = config.TYDE_BASE_URL + "/api/v1/alarms"
-        try:
-            data = {
-                'sensor_ids': sensor_ids,
-                'aggtype': "RAS",
-                "from_time": from_time,
-                "to_time": to_time
-            }
+        data = {
+            'sensor_ids': sensor_ids,
+            'aggtype': "RAS",
+            "from_time": from_time,
+            "to_time": to_time
+        }
 
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the alarm request! Code{my_res.status_code} {my_res.text} Error is:{e}")
-            return {}
+        return self.make_request("/api/v1/alarms",
+                                 "Something went wrong with the alarm request!",
+                                 data=data)
 
     def get_latest_datapoint(self, sensor_ids):
-        request_url = config.TYDE_BASE_URL + "/api/v1/sensors/latest"
-        try:
-            data = {'sensor_ids': sensor_ids}
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, params=data, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
-            return {}
+        data = {'sensor_ids': sensor_ids}
+        return self.make_request("/api/v1/sensors/latest",
+                                 "Something went wrong with the latest datapoint request!",
+                                 data=data)
 
-    # ######################  PORTFOLIO RELATED FUNCTIONS #############################################
+    # ######################  PORTFOLIO RELATED FUNCTIONS ###############################################
+
     def list_portfolios(self):
-        request_url = config.TYDE_BASE_URL + "/api/v1/access/portfolios/list"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
-            return {}
+        return self.make_request("/api/v1/access/portfolios/list",
+                                 "Something went wrong with the portfolio list request!")
 
     def get_portfolio_info(self, ppid):
-        request_url = config.TYDE_BASE_URL + f"/api/v1/access/portfolio/{ppid}"
-        try:
-            head = {"Authorization": self.get_access_token()}
-            my_res = requests.get(request_url, headers=head)
-            my_res.raise_for_status()
-            return my_res.json()
-        except Exception as e:
-            config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
-            return {}
+        return self.make_request(f"/api/v1/access/portfolio/{ppid}",
+                                 "Something went wrong with getting portfolio info!")
