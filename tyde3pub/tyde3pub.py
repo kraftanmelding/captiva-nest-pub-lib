@@ -222,10 +222,9 @@ class TydeClient:
                                  "Something went wrong with the raw data request!",
                                  data=data)
 
-    def read_alarms(self, sensor_ids, from_time=None, to_time=None):
+    def get_alarms(self, sensor_ids, from_time=None, to_time=None):
         data = {
             'sensor_ids': sensor_ids,
-            'aggtype': "RAS",
             "from_time": from_time,
             "to_time": to_time
         }
