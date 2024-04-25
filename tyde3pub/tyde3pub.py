@@ -77,8 +77,13 @@ class TydeClient:
     def is_token_valid(self):
         try:
             signing_key = self.jwks_client.get_signing_key_from_jwt(self.access_token)
-            decoded = jwt.decode(self.access_token, signing_key.key, "RS256",
-                                 audience=self.target_audience)
+            jwt.decode(
+                self.access_token,
+                signing_key.key,
+                "RS256",
+                audience=self.target_audience
+            )
+
             return True
 
         except Exception as e:
