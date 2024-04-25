@@ -153,7 +153,7 @@ class TydeClient:
 
     # ######################  POWERPLANTS RELATED FUNCTIONS #############################################
     def list_powerplants(self):
-        request_url = config.TYDE_BASE_URL + f"/api/v1/context/context/plants"
+        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/plants"
         try:
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
@@ -174,12 +174,12 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} Error is:{e}")
             return {}
 
-    # ######################  SENSORS RELATED FUNCTIONS #############################################
+    ######################## SENSORS RELATED FUNCTIONS #############################################
     def get_sensor_for_powerplants(self, hpp_id=None):
         data = {}
         if hpp_id:
             data["associations"] = hpp_id
-        request_url = config.TYDE_BASE_URL + f"/api/v1/context/context/sensors"
+        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/sensors"
         try:
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
@@ -189,9 +189,9 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
-    def get_sensor_info(self, sensorids):
-        data = {"sensorids": sensorids}
-        request_url = config.TYDE_BASE_URL + f"/api/v1/context/context/sensors"
+    def get_sensor_info(self, sensor_ids):
+        data = {"sensor_ids": sensor_ids}
+        request_url = config.TYDE_BASE_URL + "/api/v1/context/context/sensors"
         try:
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
@@ -201,10 +201,10 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
-    def delete_sensor_data(self, sensor_ids, timefrom, timeto):
+    def delete_sensor_data(self, sensor_ids, from_time, to_time):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/deletedata"
         try:
-            data = {'sensorids': sensor_ids, "timefrom": timefrom, "timeto": timeto}
+            data = {'sensor_ids': sensor_ids, "from_time": from_time, "to_time": to_time}
             config.LOGGER.warning(f"Deleting Sensor data {data}")
             head = {"Authorization": self.get_access_token()}
             my_res = requests.delete(request_url, params=data, headers=head)
@@ -214,14 +214,14 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code}  {my_res.text} Error is:{e}")
             return {}
 
-    def read_data(self, sensor_ids, timefrom=0, timeto=0, granularity="HOURLY", aligned=False):
+    def read_data(self, sensor_ids, from_time=0, to_time=0, granularity="HOURLY", aligned=False):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/readdata"
         try:
             data = {
-                'sensorids': sensor_ids,
+                'sensor_ids': sensor_ids,
                 'aggtype': granularity,
-                "timefrom": timefrom,
-                "timeto": timeto,
+                "from_time": from_time,
+                "to_time": to_time,
                 "aligned": aligned
             }
 
@@ -234,10 +234,10 @@ class TydeClient:
             config.LOGGER.warning(f"Something went wrong with the request! Code{my_res.status_code} {my_res.text} Error is:{e}")
             return {}
 
-    def read_alarms(self, sensor_ids, timefrom=0, timeto=0):
+    def read_alarms(self, sensor_ids, from_time=0, to_time=0):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/readalarms"
         try:
-            data = {'sensorids': sensor_ids, 'aggtype': "RAS", "timefrom": timefrom, "timeto": timeto}
+            data = {'sensor_ids': sensor_ids, 'aggtype': "RAS", "from_time": from_time, "to_time": to_time}
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
             my_res.raise_for_status()
@@ -249,7 +249,7 @@ class TydeClient:
     def get_latest_datapoint(self, sensor_ids):
         request_url = config.TYDE_BASE_URL + "/api/v1/data/getlatest"
         try:
-            data = {'sensorids': sensor_ids}
+            data = {'sensor_ids': sensor_ids}
             head= {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, params=data, headers=head)
             my_res.raise_for_status()
@@ -260,7 +260,7 @@ class TydeClient:
 
     # ######################  PORTFOLIO RELATED FUNCTIONS #############################################
     def list_portfolios(self):
-        request_url = config.TYDE_BASE_URL + f"/api/v1/access/portfolios/list"
+        request_url = config.TYDE_BASE_URL + "/api/v1/access/portfolios/list"
         try:
             head = {"Authorization": self.get_access_token()}
             my_res = requests.get(request_url, headers=head)
