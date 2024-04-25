@@ -17,9 +17,10 @@ __author__ = 'Luca'
 """
 
 import pint
-UREG = pint.UnitRegistry()  # lets make it global to speed it up
+UREG = pint.UnitRegistry()  # let's make it global to speed it up
 
-def convert(from_unit, to_unit, value = 1):
+
+def convert(from_unit, to_unit, value=1):
     """ Convert the value from_unit to to_unit. dimensionless is ""
 
     Args:
@@ -30,7 +31,8 @@ def convert(from_unit, to_unit, value = 1):
     Returns:
         value (number or ndarray) if conversion is valid, otherwise raise exception.
     """
-    if is_meter_water_column(from_unit) or is_meter_water_column(to_unit):  # this we handle it in another function because pint does not support mWc
+    # this we handle it in another function because pint does not support mWc
+    if is_meter_water_column(from_unit) or is_meter_water_column(to_unit):
         return convert_meters_h20(from_unit, to_unit, value)
     converted_value = value * UREG(from_unit).to(to_unit)
     return converted_value.magnitude
@@ -52,6 +54,3 @@ def is_meter_water_column(unit):
     if unit == "mwc" or unit == "m_h2o" or unit == "mh2o" or unit == "meter_h20":
         return True
     return False
-
-
-
