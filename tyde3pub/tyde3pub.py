@@ -141,11 +141,11 @@ class TydeClient:
         except Exception as e:
             config.LOGGER.warning(f"Something wrong with the Access manager. Error is: {e}")
 
-    def has_access_to_hpp(self, hppid):
-        return self.make_request(f"/api/v1/access/users/hasaccess?email={self.username}&powerplant_id={hppid}",
+    def has_access_to_pp(self, pp_id):
+        return self.make_request(f"/api/v1/access/users/hasaccess?email={self.username}&powerplant_id={pp_id}",
                                  "Something went wrong with the access request!")
 
-    # ######################  POWERPLANTS RELATED FUNCTIONS #############################################
+    # ######################  POWER PLANT RELATED FUNCTIONS #############################################
 
     def make_request(self, url_suffix, log_message, method='get', data=None):
         request_url = config.TYDE_BASE_URL + url_suffix
@@ -166,18 +166,18 @@ class TydeClient:
 
     def list_powerplants(self):
         return self.make_request("/api/v1/context/context/plants",
-                                 "Something went wrong with the powerplant list request!")
+                                 "Something went wrong with the Power plant list request!")
 
-    def get_powerplant_info(self, hppid):
-        return self.make_request(f"/api/v1/access/powerplants/{hppid}/info",
-                                 "Something went wrong with getting powerplant info!")
+    def get_powerplant_info(self, pp_id):
+        return self.make_request(f"/api/v1/access/powerplants/{pp_id}/info",
+                                 "Something went wrong with getting Power plant info!")
 
     # ########################## SENSORS RELATED FUNCTIONS ##############################################
 
-    def get_sensor_for_powerplants(self, hpp_id=None):
+    def get_sensor_for_powerplants(self, pp_id=None):
         data = {}
-        if hpp_id:
-            data["associations"] = hpp_id
+        if pp_id:
+            data["associations"] = pp_id
 
         return self.make_request("/api/v1/context/context/sensors",
                                  "Something went wrong with the sensor request!",
@@ -245,6 +245,6 @@ class TydeClient:
         return self.make_request("/api/v1/access/portfolios/list",
                                  "Something went wrong with the portfolio list request!")
 
-    def get_portfolio_info(self, ppid):
-        return self.make_request(f"/api/v1/access/portfolio/{ppid}",
+    def get_portfolio_info(self, pp_id):
+        return self.make_request(f"/api/v1/access/portfolio/{pp_id}",
                                  "Something went wrong with getting portfolio info!")
