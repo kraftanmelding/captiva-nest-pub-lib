@@ -28,9 +28,13 @@ pp_info = tyde_client.get_powerplant_info(pp_id)
 
 have_access = tyde_client.has_access_to_pp(pp_id)
 
-my_sensors = tyde_client.get_sensor_for_powerplants(pp_id)
+pp_sensors = tyde_client.get_sensors_for_powerplant(pp_id)
+print("Power plant sensors:", pp_sensors)
 
-my_sensor_info = tyde_client.get_sensor_info("stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg")
+sensor_human_name = "stepsolutions.Haan.t_h01_10mindata_Grd_Prod_Pwr_Avg"
+sensor_id = "66126091bfe96ecfe47041f9"
+
+my_sensor_info = tyde_client.get_sensor_info(sensor_id)
 print("My sensors:", my_sensor_info)
 
 # portfolio_list = tyde_client.list_portfolios()
