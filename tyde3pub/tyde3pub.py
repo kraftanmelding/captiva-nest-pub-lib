@@ -164,6 +164,12 @@ class TydeClient:
             config.LOGGER.warning(f"{log_message}{error_details} Error: {e}")
             return {}
 
+    def get_powerplant_sensors(self, pp_id):
+        data = {"id": pp_id}
+        return self.make_request("/api/v1/context/context/plant",
+                                 "Something went wrong with the Power plant list request!",
+                                 data=data)
+
     def list_powerplants(self):
         return self.make_request("/api/v1/context/context/plants",
                                  "Something went wrong with the Power plant list request!")
@@ -174,19 +180,21 @@ class TydeClient:
 
     # ########################## SENSORS RELATED FUNCTIONS ##############################################
 
-    def get_sensor_for_powerplants(self, pp_id=None):
-        data = {}
-        if pp_id:
-            data["associations"] = pp_id
+    def get_sensors_for_powerplant(self, pp_id=None):
+        data = {"id": pp_id}
 
-        return self.make_request("/api/v1/context/context/sensors",
+        return self.make_request("/api/v1/context/context/sensor",
                                  "Something went wrong with the sensor request!",
                                  data=data)
 
-    def get_sensor_info(self, sensor_ids):
-        data = {"sensor_ids": sensor_ids}
-
+    def get_sensors_for_all_powerplants(self):
         return self.make_request("/api/v1/context/context/sensors",
+                                 "Something went wrong with the sensor request!")
+
+    def get_sensor_info(self, sensor_ids):
+        data = {"id": sensor_ids}
+
+        return self.make_request("/api/v1/context/context/sensor",
                                  "Something went wrong with the sensor info request!",
                                  data=data)
 
