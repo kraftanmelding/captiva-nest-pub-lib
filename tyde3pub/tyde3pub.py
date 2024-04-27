@@ -180,13 +180,6 @@ class TydeClient:
 
     # ########################## SENSORS RELATED FUNCTIONS ##############################################
 
-    def get_sensors_for_powerplant(self, pp_id=None):
-        data = {"id": pp_id}
-
-        return self.make_request("/api/v1/context/context/sensor",
-                                 "Something went wrong with the sensor request!",
-                                 data=data)
-
     def get_sensors_for_all_powerplants(self):
         return self.make_request("/api/v1/context/context/sensors",
                                  "Something went wrong with the sensor request!")
