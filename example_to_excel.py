@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 # ]
 
 
-tyde_client = tyde3pub.TydeClient({"username": "mo@captiva.no", "password": "lWRlunyNcM$A2e7GaSgR"})
+tyde_client = tyde3pub.TydeClient({"username": "username", "password": "password"})
 
 tyde_client.get_upstream_status()
 # tyde_client.print_role_info()
