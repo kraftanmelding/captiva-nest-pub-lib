@@ -118,8 +118,8 @@ print("Done")
 #alarms_data = tyde_client.get_alarms(alarm_id, from_time=from_time, to_time=to_time)
 #print("Alarms data:", alarms_data)
 
-raw_sensor_data = tyde_client.get_raw_data(sensor_ids, from_time=from_time, to_time=to_time)
-print("Raw sensor data:", raw_sensor_data)
+#raw_sensor_data = tyde_client.get_raw_data(sensor_ids, from_time=from_time, to_time=to_time)
+#print("Raw sensor data:", raw_sensor_data)
 
 #sensor_data = tyde_client.get_aggregated_data(sensor_ids, from_time=from_time, to_time=to_time, aggregation="HOURLY")
 #print("Aggregated sensor data", sensor_data)
