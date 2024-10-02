@@ -1,0 +1,21 @@
+image: python:slim
+pipelines:
+  branches:
+   master:
+    - step:
+        deployment: Test
+        script:
+        - apt update && apt install curl --no-install-recommends -y
+        - URL="https://dogfood.broentech.no/versioner/increasepatch/tyde/?service=tyde3&passwd=${PASSWD}"
+        - export VERSION="$(curl -sSLX GET "$URL" | tr -d '[:alpha:]')"
+        - export PACKAGE='tyde3'
+        - echo "${VERSION}"
+        - echo -e "__name__ = '${PACKAGE}'\n__version__ = '${VERSION}'" | tee ./tyde3/__init__.py
+        - sed -i "0,/0.0.0/s//$VERSION/" ./setup.py
+        - pip install --user --upgrade setuptools wheel
+        - pip install --user --upgrade twine
+        - pwd
+        - cat ./tyde3/__init__.py
+        - python3 setup.py sdist
+        - cat ./tyde3/__init__.py
+        - python3 -m twine upload --repository-url https://dogfood.broentech.no/pypiserver -u "${PYPIUSER}" -p "${PYPIPASS}" --verbose dist/*.tar.gz
