@@ -98,6 +98,5 @@ This is not meant to be used as stand alone service.
 This is a Alpha version of the Library
 
 ## Info and Support
-Luca Petricca @ Broentech Solutions 
-Team: Broentech Solutions 
-
+Marius Øgård @ Kaia Solutions
+Team: Kaia Solutions
