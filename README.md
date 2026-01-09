@@ -56,7 +56,7 @@ In case an invalid unit or conversion called, an exception rises:
 
 
 # Developers setup
-You can donwload the tar.gz file in this repo and then pip install the package with this:
+You can download the tar.gz file in this repo and then pip install the package with this:
 
 *  pip install -e /PATH/tyde3pub_v0.0.1.tar.gz
 
